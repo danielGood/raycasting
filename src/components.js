@@ -59,7 +59,6 @@ Crafty.c('Finish', {
 	
 });
 
-
 Crafty.c('PlayerCharacter', {
   init: function() {
     this.requires('Actor, Fourway, Color, Collision')
@@ -95,5 +94,11 @@ Crafty.c('PlayerCharacter', {
    
   
 });
-
+Crafty.c('Light', {
+	init: function() {
+		this.requires('Actor, Color')
+		   .color('yellow')
+	},
+	
+});
 
