@@ -96,8 +96,9 @@ Crafty.c('PlayerCharacter', {
 });
 Crafty.c('Light', {
 	init: function() {
-		this.requires('Actor, Color')
+		this.requires('Actor, Fourway, Color')
 		   .color('yellow')
+		  
 	},
 	
 });

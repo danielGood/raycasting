@@ -18,19 +18,12 @@ Crafty.scene('Game', function(){
 	//occupied[start.at().x][start.at().y] = true;
 	//occupied[finish.at().x][finish.at().y] = true;
 	
-	this.myBush=Crafty.e('Bush').at(4, 5);
-	this.myTree =Crafty.e('Tree').at(10, 5);
+	this.myBush=Crafty.e('Bush').at(36, 15);
+	this.myTree =Crafty.e('Tree').at(4, 8);
 	//this.myBush.move('e', 250);
 	Crafty.e('Bush').at(20, 5);
 	
-	vectorSquare ={
-		v1: {x:Game.map_grid.width, y:0},
-		v2: {x:0, y: -Game.map_grid.height},
-		v3: {x:-Game.map_grid.width, y:0},
-		v4: {x:0, y: Game.map_grid.height}
-	};
 	
-	this.myBush.vectorLight= vectorSquare;
 	
 	
 	for (var x = 0; x < Game.map_grid.width; x++) {
@@ -77,6 +70,7 @@ Crafty.scene('Game', function(){
 	
 	/////////////////////////////////////////
 	///////////////////////////////////////
+	
 	var nameArray = [{
 		name: "Bush",
 		fun: shapes.squareShape,
@@ -95,10 +89,10 @@ Crafty.scene('Game', function(){
 	
 	componentArray.push(shapes.wall1(16, 16, Game.width()-32));
 	componentArray.push(shapes.wall1(16, Game.height()-16, Game.width()-32));
-	componentArray.push(shapes.wall1(16, Game.height()-16, Game.width()-32));
+	componentArray.push(shapes.wall2(16, 16, Game.height()-32));
 	componentArray.push(shapes.wall2(Game.width()-16, 16, Game.height()-32));
-	this.myLight=Crafty.e('Light').at(16, 16);
-	
+	this.myLight=Crafty.e('Light').at(19, 16);
+	//this.myLight=Crafty.e('Light').at(2, 4);
 	rayCast(componentArray, this.myLight.x, this.myLight.y);
 	
 	

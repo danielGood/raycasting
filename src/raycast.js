@@ -134,6 +134,50 @@ var shapes={
 };
 
 
+
+function getAngleBetweenPoints(currX, currY, x, y){
+	 
+	      var moveX = x-currX;
+	      var moveY = y-currY;
+	      var quadrant;
+	      if(moveX > 0 && moveY > 0){
+		     quadrant=1;
+	       }
+	      if(moveX < 0 && moveY > 0){
+		     quadrant=2;
+	      }
+	      if(moveX < 0 && moveY < 0){
+		  quadrant=3;
+	     }
+	     if(moveX > 0 && moveY < 0){
+		  quadrant=4;
+	     }
+	 
+	   var theta = Math.atan(moveY/moveX);
+	  
+	   
+	theta=Math.abs(theta);
+	
+	if(quadrant==2){
+		
+		theta=Math.PI-theta;
+		
+		
+	} 
+	  
+	if(quadrant==3){
+		theta=theta-(Math.PI);
+	}
+	if(quadrant==4){
+		theta=(2*Math.PI)-theta;
+	}
+	
+		  
+		  
+		  return theta;
+		 ////////// 
+}
+
 function rayCast(rayArray, ox, oy){
 	var lineArray =[];
 	//this loop turns array of array of objects to array of objects
@@ -141,65 +185,43 @@ function rayCast(rayArray, ox, oy){
       temp=rayArray[y];
 	  lineArray =lineArray.concat(temp);
     }
-	
+	var myRays =[];//return array
 	var rayList=[];
 	var origin={x: ox, y:  oy};
 	//create a list of rays based on line endpoints
 	for (var y = 0; y < lineArray.length; y++) {
          point1=lineArray[y].p1;
 		  point2=lineArray[y].p2;
+		  //each loop deals with 2 points 
 		  ////
 		  ////
+		  
+		  
+		  var angle1 = getAngleBetweenPoints(origin.x, origin.y, point1.x, point1.y);
+		  var angle2 =getAngleBetweenPoints(origin.x, origin.y, point2.x, point2.y);
+		
+		  //console.log(origin.x + "  "+origin.y+ "  "+ point1.x+ "  "+ point1.y);
+		  //console.log(origin.x + "  "+origin.y+ "  "+ point2.x+ "  "+ point2.y);
+		  
 		  var minLength =1000;
-		  vec1 ={x: point1.x-origin.x,
-		  y: point1.y-origin.y,
-		  length: 0
-		  }
-		  vec2 ={x: point2.x-origin.x,
-		  y: point2.y-origin.y,
-		  length:0
-		  }
-		  vec1.length=Math.sqrt(Math.pow(vec1.x, 2)+Math.pow(vec1.y, 2));
-		  vec2.length=Math.sqrt(Math.pow(vec2.x, 2)+Math.pow(vec2.y, 2));
-		  
-		  var scale1 = minLength/vec1.length;
-		  var scale2 = minLength/ vec2.length;
-		  vec1.x=vec1.x*scale1;
-		  vec1.y=vec1.y*scale1;
-		 
-		  
-		  vec2.x=vec2.x*scale2;
-		  vec2.y=vec2.y*scale2;
 		  
 		 
-		  
-		  
-		  
-		  
-		  if(Math.abs(vec1.x)<Math.abs(vec1.y)){
-			  rayList.push(creSeg(origin.x, origin.y, vec1.x+origin.x+5, vec1.y+origin.y));
-		      rayList.push(creSeg(origin.x, origin.y, vec1.x+origin.x-5, vec1.y+origin.y));
-		  }else{
-			  rayList.push(creSeg(origin.x, origin.y, vec1.x+origin.x, vec1.y+origin.y+5));
-		      rayList.push(creSeg(origin.x, origin.y, vec1.x+origin.x, vec1.y+origin.y-5));
-		  }
-		  if(Math.abs(vec2.x)<Math.abs(vec2.y)){
-			  rayList.push(creSeg(origin.x, origin.y, vec2.x+origin.x+5, vec2.y+origin.y));
-		      rayList.push(creSeg(origin.x, origin.y, vec2.x+origin.x-5, vec2.y+origin.y));
-		  }else{
-			  rayList.push(creSeg(origin.x, origin.y, vec2.x+origin.x, vec2.y+origin.y+5));
-		      rayList.push(creSeg(origin.x, origin.y, vec2.x+origin.x, vec2.y+origin.y-5));
-		  }
+		 
+		  rayList.push(creSeg(origin.x, origin.y, origin.x+Math.cos(angle1+.001)*minLength, origin.y+Math.sin(angle1+.001)*minLength));
+		  rayList.push(creSeg(origin.x, origin.y, origin.x+Math.cos(angle1-.001)*minLength, origin.y+Math.sin(angle1-.001)*minLength));
+          rayList.push(creSeg(origin.x, origin.y, origin.x+Math.cos(angle2+.001)*minLength, origin.y+Math.sin(angle2+.001)*minLength));
+		  rayList.push(creSeg(origin.x, origin.y, origin.x+Math.cos(angle2-.001)*minLength, origin.y+Math.sin(angle2-.001)*minLength));
 		  
 		
-		  rayList.push(creSeg(origin.x, origin.y, point1.x, point1.y));
-		  rayList.push(creSeg(origin.x, origin.y, point2.x, point2.y));
+		 rayList.push(creSeg(origin.x, origin.y, point1.x, point1.y));
+		 rayList.push(creSeg(origin.x, origin.y, point2.x, point2.y));
     }
-	
+	console.log("and now rays");
 	for (var i=0; i<rayList.length; i++){
 		var T1=100;
 		var lx;
 		var ly;
+		//console.log(rayList[i].aX+" "+rayList[i].aY+" "+rayList[i].bX+" "+rayList[i].bY);
 		for(var j=0; j<lineArray.length; j++){
 			
 			
@@ -219,8 +241,24 @@ function rayCast(rayArray, ox, oy){
 		}
 		//console.log(lx + " " + ly);
 		Crafty.e("Segment").Line(origin.x, origin.y, lx, ly);
+		myRays.push(creSeg(origin.x, origin.y, lx, ly));
+		
 	}
+	var myPolygon=[];
+	////////
+	for(var i=0; i<myRays.length; i++){
+		if(i==0){
+			myPolygon.push([origin.x, origin.y]);
+			myPolygon.push([myRays[i].bX, myRays[i].bY]);
+		}else{
+			myPolygon.push([myRays[i].bX, myRays[i].bY]);
+		}
+		
+	}
+	var cpol = Crafty.polygon(myPolygon);
 	
+	return {polygon: cpol,
+		rays: myRays};
 }
 
 function updateCompPos(nameArray){
