@@ -18,11 +18,11 @@ Crafty.scene('Game', function(){
 	//occupied[start.at().x][start.at().y] = true;
 	//occupied[finish.at().x][finish.at().y] = true;
 	
-	this.myBush=Crafty.e('Bush').at(36, 15);
+	//this.myBush=Crafty.e('Bush').at(19, 5);
 	this.myTree =Crafty.e('Tree').at(4, 8);
 	//this.myBush.move('e', 250);
-	Crafty.e('Bush').at(20, 5);
-	
+	Crafty.e('Bush').at(25, 5);
+	Crafty.e('Bush').at(19, 5);
 	
 	
 	
@@ -86,15 +86,30 @@ Crafty.scene('Game', function(){
 		
 	
 	var componentArray= updateCompPos(nameArray);
-	
+	console.log(componentArray);
 	componentArray.push(shapes.wall1(16, 16, Game.width()-32));
 	componentArray.push(shapes.wall1(16, Game.height()-16, Game.width()-32));
 	componentArray.push(shapes.wall2(16, 16, Game.height()-32));
 	componentArray.push(shapes.wall2(Game.width()-16, 16, Game.height()-32));
-	this.myLight=Crafty.e('Light').at(19, 16);
+	this.myLight=Crafty.e('Light').at(18, 16);
 	//this.myLight=Crafty.e('Light').at(2, 4);
-	rayCast(componentArray, this.myLight.x, this.myLight.y);
+	var light=rayCast(componentArray, this.myLight.x, this.myLight.y);
+	//console.log(light.polygon);
+	//console.log(light.polygon[5])
+	for(var i=0;i<light.polygon.length ;i++){
+		//console.log(light.polygon[i]);
+		this.myP=Crafty.e('Poly').makeBox(light.polygon[i], "rgba(255, 255, 209, 0.5)");
+	}
 	
+	
+	//Crafty.e('Poly').makeBox(light.polygon[0], "rgba(255, 255, 209, 0.5)");
+	//Crafty.e('Poly').makeBox(light.polygon[1], "rgba(255, 255, 209, 0.5)");
+	//Crafty.e('Poly').makeBox(light.polygon[2], "rgba(255, 255, 209, 0.5)");
+	//Crafty.e('Poly').makeBox(light.polygon[3], "rgba(255, 255, 209, 0.5)");
+	//Crafty.e('Poly').makeBox(light.polygon[4], "rgba(255, 255, 209, 0.5)");
+	//Crafty.e('Poly').makeBox(light.polygon[5], "rgba(255, 255, 209, 0.5)");
+	//Crafty.e('Poly').makeBox(light.polygon[6], "rgba(255, 255, 209, 0.5)");
+	//Crafty.e('Poly').makeBox(light.polygon[7], "rgba(255, 255, 209, 0.5)");
 	
 	//console.log(lineArray[0].p1.x);
 	

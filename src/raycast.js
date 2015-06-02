@@ -166,7 +166,9 @@ function getAngleBetweenPoints(currX, currY, x, y){
 	} 
 	  
 	if(quadrant==3){
-		theta=theta-(Math.PI);
+		
+		//theta=theta-(Math.PI);
+		theta=Math.PI+theta
 	}
 	if(quadrant==4){
 		theta=(2*Math.PI)-theta;
@@ -239,25 +241,39 @@ function rayCast(rayArray, ox, oy){
 			}
 				
 		}
+		
+		var ray =creSeg(origin.x, origin.y, lx, ly);
+		ray.theta=getAngleBetweenPoints(ray.aX, ray.aY, ray.bX, ray.bY);
+		
 		//console.log(lx + " " + ly);
-		Crafty.e("Segment").Line(origin.x, origin.y, lx, ly);
-		myRays.push(creSeg(origin.x, origin.y, lx, ly));
+		//Crafty.e("Segment").Line(origin.x, origin.y, lx, ly);
+		myRays.push(ray);
 		
 	}
-	var myPolygon=[];
-	////////
-	for(var i=0; i<myRays.length; i++){
-		if(i==0){
-			myPolygon.push([origin.x, origin.y]);
-			myPolygon.push([myRays[i].bX, myRays[i].bY]);
-		}else{
-			myPolygon.push([myRays[i].bX, myRays[i].bY]);
-		}
-		
-	}
-	var cpol = Crafty.polygon(myPolygon);
+	////sort rays by theta
 	
-	return {polygon: cpol,
+	
+	myRays.sort(function compare(a,b){
+		return a.theta-b.theta;
+		
+	});
+	
+	////
+	
+	
+	var myTriangles=[];
+	////////
+	for(var i=0; i<myRays.length-1; i++){
+		    console.log(i);
+			console.log(myRays[i]);
+			
+			myTriangles.push([[origin.x, origin.y], [myRays[i].bX, myRays[i].bY],[myRays[i+1].bX, myRays[i+1].bY] ]);
+			
+		
+	}
+	
+	
+	return {polygon: myTriangles,
 		rays: myRays};
 }
 
@@ -277,3 +293,46 @@ function updateCompPos(nameArray){
 	}
 	return componentArray;
 }
+Crafty.c('Poly',{
+	ready: true,
+	init: function() {
+            this.addComponent("2D, Canvas");
+
+           
+
+            this.bind("Draw", function(obj) {
+                // Pass the Canvas context and the drawing region.
+                this._draw(obj.ctx, obj.pos);
+            });
+	},
+	 _draw: function(ctx, po) {
+		
+		 ctx.fillStyle = this._color;
+		 //ctx.fillRect(50, 60, 200, 200);
+		 ctx.strokeStyle=this._color;
+		 
+		 
+		 var firstA ;  //to close the polygon
+		 var firstB;
+		 for(var i=0; i<this.p.length; i++){
+			 ctx.lineTo(this.p[i][0], this.p[i][1]);
+			 
+			 if(i==0){
+				 firstA=this.p[i][0];
+				 firstB=this.p[i][1];
+			 }
+		 }
+		 
+		 ctx.lineTo(firstA, firstB);
+		 
+		 ctx.stroke();
+		 ctx.fillStyle=this._color;
+		 ctx.fill();
+	 },
+	 makeBox: function(p, color) {
+		// console.log(x);
+            this.attr({x: p[0][0], y: p[0][1], p: p});
+            this._color = color;
+        }
+	
+});
